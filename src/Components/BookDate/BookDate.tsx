@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useSlot } from '../../Context/SlotContext';
 import BookingForm from './BookingForm';
 import { RollbackOutlined } from '@ant-design/icons';
+import { Helmet } from "react-helmet";
 
 const BookDate: React.FC = () => {
 
@@ -50,18 +51,21 @@ const BookDate: React.FC = () => {
   );
 
   const disablePastDates = (current: Dayjs) => {
-    const today = dayjs().startOf('day'); 
+    const today = dayjs().startOf('day');
     return current.isBefore(today, 'day');
   };
 
-  return (
+  return <>
+    <Helmet>
+      <title>Book Date</title>
+      <meta name="description" content="Book new date in future" />
+    </Helmet>
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-5/6 mx-auto p-4 bg-white rounded shadow">
-      <div className="flex items-center justify-between mb-4">
-      <h1 className="text-xl font-semibold">Book a Slot</h1>
-        <Button type="primary" ghost onClick={() => navigate('/appointments')}>Back <RollbackOutlined /></Button>
-      </div>
-
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-semibold">Book a Slot</h1>
+          <Button type="primary" ghost onClick={() => navigate('/appointments')}>Back <RollbackOutlined /></Button>
+        </div>
         <Calendar
           onSelect={handleDateSelect}
           disabledDate={disablePastDates}
@@ -76,7 +80,7 @@ const BookDate: React.FC = () => {
         />
       </div>
     </div>
-  );
+  </>
 };
 
 export default React.memo(BookDate);

@@ -1,18 +1,18 @@
 import React from 'react';
-import { Calendar } from 'antd';
+import { Button, Calendar } from 'antd';
 import { Dayjs } from 'dayjs';
-import { Slot } from '../../interfaces/Slot';
+import { useNavigate } from 'react-router-dom';
 
 interface CalendarComponentProps {
-    onDateSelect: (date: Dayjs) => void;
     slotsMap: Record<string, string>;
 }
 
-const CalendarComponent: React.FC<CalendarComponentProps> = ({ onDateSelect, slotsMap }) => {
+const CalendarComponent: React.FC<CalendarComponentProps> = ({ slotsMap }) => {
+
+    const navigate = useNavigate()
     const cellRender = (date: Dayjs) => {
         const dateStr = date.format('YYYY-MM-DD');
         const userName = slotsMap[dateStr];
-
         return (
             <div className={`text-center text-sm ${userName ? 'bg-red-300 text-gray-600 h-full' : ''}`}>
                 {userName ? `Booked by ${userName}` : ''}
@@ -22,10 +22,12 @@ const CalendarComponent: React.FC<CalendarComponentProps> = ({ onDateSelect, slo
 
     return (
         <div className="p-4 bg-blue-50 rounded shadow">
-            <h1 className="text-xl font-semibold mb-4">All Booked Dates</h1>
+            <div className="flex items-center justify-between mb-4">
+                <h1 className="text-xl font-semibold">All Booked Dates</h1>
+                <Button type='primary' ghost onClick={()=>navigate('/book-date')}>Book Date</Button>
+            </div>
             <Calendar
                 className='p-3'
-                onSelect={onDateSelect}
                 cellRender={cellRender}
             />
         </div>

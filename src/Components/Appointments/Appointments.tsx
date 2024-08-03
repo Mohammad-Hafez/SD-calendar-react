@@ -1,20 +1,15 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Dayjs } from 'dayjs';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
 import { useSlot } from '../../Context/SlotContext';
-import { useLanguage } from '../../Context/LanguageContext';
 import { Slot } from '../../interfaces/Slot';
 import UserTable from './UserTable';
 import AppointmentsList from './AppointmentsList';
 import CalendarComponent from './CalendarComponent';
+import { Helmet } from 'react-helmet';
 
 const Appointments = () => {
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const navigate = useNavigate();
     const { slots } = useSlot();
-    const { t } = useLanguage();
 
     const slotsMap = useMemo(() => {
         return slots.reduce((acc: any, slot: Slot) => {
@@ -23,17 +18,13 @@ const Appointments = () => {
         }, {});
     }, [slots]);
 
-    const handleDateSelect = useCallback((date: Dayjs) => {
-        setSelectedDate(date);
-        navigate('/book-date');
-    }, [navigate]);
-
     const handleUserSelect = (userName: string) => {
         setSelectedUser(userName);
     };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
+        setSelectedUser(null)
     };
 
     const filteredUsers = useMemo(() => {
@@ -45,7 +36,11 @@ const Appointments = () => {
         return slots.filter((slot: Slot) => slot.name === selectedUser);
     }, [slots, selectedUser]);
 
-    return (
+    return <>
+        <Helmet>
+            <title>Appointments</title>
+            <meta name="description" content="This is all appointments for all users" />
+        </Helmet>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 min-h-screen bg-gray-100">
             <div className="md:col-span-1">
                 <UserTable
@@ -63,12 +58,11 @@ const Appointments = () => {
             </div>
             <div className="md:col-span-2">
                 <CalendarComponent
-                    onDateSelect={handleDateSelect}
                     slotsMap={slotsMap}
                 />
             </div>
         </div>
-    );
+    </>
 };
 
 export default React.memo(Appointments);
